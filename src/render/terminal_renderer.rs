@@ -2,7 +2,7 @@ use crate::core::screen::Image;
 use crate::input::InputAction;
 use crate::render::{Renderer, PIXEL_TYPES, PIXEL_TYPE_COUNT};
 use colored::Colorize;
-use crossterm::{event, ExecutableCommand};
+use crossterm::{cursor, event, ExecutableCommand};
 use std::io::{stdout, Stdout, Write};
 use winapi::um::processenv::GetStdHandle;
 use winapi::um::winbase::STD_OUTPUT_HANDLE;
@@ -66,7 +66,11 @@ impl Renderer for TerminalRenderer {
 impl TerminalRenderer {
     pub fn new(render_type: TerminalRenderType) -> TerminalRenderer {
         let mut stdout = stdout();
-        stdout.execute(event::EnableMouseCapture).expect("Terminal doesn't allow mouse capture");
+        stdout
+            .execute(event::EnableMouseCapture)
+            .expect("Terminal doesn't allow mouse capture")
+            .execute(cursor::Hide)
+            .expect("Terminal doesn't allow cursor hiding capture");
         TerminalRenderer {
             chars_buffer: String::new(),
             stdout,
