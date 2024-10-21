@@ -4,6 +4,7 @@ use cgmath::Vector2;
 use std::time::Duration;
 
 pub trait InputHandler {
+    fn contains_input(&self, input_action: InputAction) -> bool;
     fn input_actions(&self) -> impl Iterator<Item=InputAction> + '_;
     fn scene_actions(&self) -> impl Iterator<Item=SceneAction> + '_;
     fn poll_event(&mut self, dt: &Duration) -> std::io::Result<()>;

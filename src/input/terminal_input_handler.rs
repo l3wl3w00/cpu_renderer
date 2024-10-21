@@ -15,6 +15,11 @@ pub struct TerminalInputHandler {
 }
 
 impl InputHandler for TerminalInputHandler {
+    fn contains_input(&self, input_action: InputAction) -> bool {
+        self.toggled_actions.contains(&input_action) ||
+        self.single_time_actions.contains(&input_action)
+    }
+
     fn input_actions(&self) -> impl Iterator<Item=InputAction> + '_ {
         Iterator::chain(
             self.toggled_actions.iter(),
@@ -114,8 +119,8 @@ impl TerminalInputHandler {
             'a' => Some(MoveDirection::Left),
             's' => Some(MoveDirection::Backward),
             'd' => Some(MoveDirection::Right),
-            'q' => Some(MoveDirection::Up),
-            'e' => Some(MoveDirection::Down),
+            'q' => Some(MoveDirection::Down),
+            'e' => Some(MoveDirection::Up),
             _ => None
         };
         move_dir.map(|dir| {ActionOnScene(SceneAction::Move(dir))})

@@ -21,7 +21,6 @@ dependencies = [
  "derive_builder",
  "rand",
  "rayon",
- "winapi",
 ]
 
 [[package]]

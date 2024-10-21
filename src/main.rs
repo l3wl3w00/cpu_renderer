@@ -3,7 +3,7 @@
 use std::time::Duration;
 use crate::core::camera::Camera;
 use crate::core::light::Light;
-use crate::core::scene::{Scene};
+use crate::core::scene::{Scene, TimeProvider};
 use crate::core::image::Image;
 use crate::core::shapes::Sphere;
 use cgmath::{Vector3, Zero};
@@ -35,19 +35,22 @@ fn run_game(
 
     let mut screen_image = Image::new([0.0; image::PIXEL_COUNT]);
     let mut scene = create_scene();
-    let mut clock: Clock = Clock::new();
+    let mut game_clock: Clock = Clock::new();
+    let mut fps_update_clock: Clock = Clock::new();
     const FPS_CAP: u16 = 144;
-    const EVENT_POLL_TIME: Duration = Duration::from_millis((1000. / FPS_CAP as f32) as u64);
-    loop {
-        input_handler.poll_event(&EVENT_POLL_TIME)?;
-        if input_handler.input_actions().any(|a| a == InputAction::Quit) {
-            break Ok(());
-        }
-        clock.tick();
-        scene.tick(input_handler.scene_actions(), &clock);
-        renderer.tick(input_handler.input_actions());
+    let frame_duration: Duration = Duration::from_secs_f32(1.0 / FPS_CAP as f32);
 
+    loop {
+        input_handler.poll_event(&frame_duration)?;
+        if input_handler.contains_input(InputAction::Quit) { break Ok(()); }
+        game_clock.tick();
+        fps_update_clock.tick();
+
+        scene.tick(input_handler.scene_actions(), &game_clock);
+        renderer.tick(input_handler.input_actions());
         screen_image.write(&scene);
+
+        display_fps(&mut fps_update_clock);
 
         renderer.render(&screen_image);
     }
@@ -77,4 +80,14 @@ fn create_scene() -> Scene {
     }
 
     scene
+}
+
+fn display_fps(fps_update_clock: &mut Clock) {
+    const FPS_UPDATE_TIME: Duration = Duration::from_millis(1000);
+    let total_time = *fps_update_clock.total_time();
+    if total_time > FPS_UPDATE_TIME {
+        let avg_fps = fps_update_clock.tick_count() as f32 / total_time.as_secs_f32();
+        println!("FPS: {}", avg_fps.round() as u16);
+        fps_update_clock.reset();
+    }
 }

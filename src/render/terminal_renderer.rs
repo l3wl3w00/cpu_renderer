@@ -2,11 +2,10 @@ use crate::core::image::Image;
 use crate::input::InputAction;
 use crate::render::{Renderer, PIXEL_TYPES, PIXEL_TYPE_COUNT};
 use colored::Colorize;
-use crossterm::{cursor, event, ExecutableCommand};
+use crossterm::{cursor, event, execute, terminal, ExecutableCommand};
 use std::io::{stdout, Stdout, Write};
-use winapi::um::processenv::GetStdHandle;
-use winapi::um::winbase::STD_OUTPUT_HANDLE;
-use winapi::um::wincon::{SetConsoleCursorPosition, COORD};
+use crossterm::cursor::MoveTo;
+use crossterm::terminal::ClearType;
 
 pub enum TerminalRenderType {
     Colored, BlackAndWhite
@@ -27,12 +26,7 @@ impl Renderer for TerminalRenderer {
     }
 
     fn render(&mut self, image: &Image) {
-        // move the cursor to the starting position,
-        // so that the new image will be drawn over the old one
-        unsafe {
-            let handle = GetStdHandle(STD_OUTPUT_HANDLE);
-            SetConsoleCursorPosition(handle, COORD { X: 0, Y: 0 });
-        }
+        let _ = execute!(self.stdout, MoveTo(0, 0));
 
         for (index, pixel) in image.pixels().iter().enumerate() {
             if index % Image::width() == 0 {
@@ -66,15 +60,26 @@ impl Renderer for TerminalRenderer {
 impl TerminalRenderer {
     pub fn new(render_type: TerminalRenderType) -> TerminalRenderer {
         let mut stdout = stdout();
+        terminal::enable_raw_mode().unwrap();
         stdout
             .execute(event::EnableMouseCapture)
             .expect("Terminal doesn't allow mouse capture")
             .execute(cursor::Hide)
-            .expect("Terminal doesn't allow cursor hiding capture");
+            .expect("Terminal doesn't allow cursor hiding capture")
+            .execute(terminal::Clear(ClearType::All))
+            .expect("Terminal couldn't be cleared");
+
         TerminalRenderer {
             chars_buffer: String::new(),
             stdout,
             render_type
         }
+    }
+}
+
+impl Drop for TerminalRenderer {
+    fn drop(&mut self) {
+        let _ = self.stdout.execute(terminal::Clear(ClearType::All));
+        terminal::disable_raw_mode().unwrap();
     }
 }

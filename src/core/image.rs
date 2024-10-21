@@ -6,7 +6,7 @@ use rayon::iter::ParallelIterator;
 use crate::input::terminal_input_handler::pixel_to_screen_space;
 
 const WIDTH_TO_HEIGHT_RATIO: f32 = 16. / 9.;
-const SCREEN_HEIGHT: usize = 68;
+const SCREEN_HEIGHT: usize = 120;
 const SCREEN_WIDTH: usize = (SCREEN_HEIGHT as f32 * WIDTH_TO_HEIGHT_RATIO) as usize;
 pub const PIXEL_COUNT: usize = SCREEN_WIDTH * SCREEN_HEIGHT;
 
