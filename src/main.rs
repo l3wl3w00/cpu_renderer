@@ -1,4 +1,6 @@
 #![feature(iterator_try_collect)]
+
+use std::time::Duration;
 use crate::core::camera::Camera;
 use crate::core::light::Light;
 use crate::core::scene::{Scene, TimeProvider};
@@ -6,7 +8,6 @@ use crate::core::screen::Image;
 use crate::core::shapes::Sphere;
 use cgmath::{Vector3, Zero};
 use rand::random;
-use std::time::{Duration, Instant};
 use crate::clock::Clock;
 use crate::core::screen;
 use crate::input::{InputAction, InputHandler};
@@ -35,9 +36,10 @@ fn run_game(
     let mut screen_image = Image::new([0.0; screen::PIXEL_COUNT]);
     let mut scene = create_scene();
     let mut clock: Clock = Clock::new();
-
+    const FPS_CAP: u16 = 60;
+    const EVENT_POLL_TIME: Duration = Duration::from_millis((1000. / FPS_CAP as f32) as u64);
     loop {
-        input_handler.poll_event(clock.dt())?;
+        input_handler.poll_event(&EVENT_POLL_TIME)?;
         if input_handler.input_actions().any(|a| a == InputAction::Quit) {
             break Ok(());
         }
