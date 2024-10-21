@@ -1,9 +1,9 @@
 use crate::input::SceneAction;
-use cgmath::{Array, InnerSpace, Vector3, Zero};
+use cgmath::{Array, ElementWise, InnerSpace, Vector3, Zero};
 use std::cmp::Ordering;
 use std::time::Duration;
 use crate::core::camera::Camera;
-use crate::core::common::{HitData, Ray};
+use crate::core::common::{HitData, NormalizedVector3, Ray};
 use crate::core::light::Light;
 use crate::core::shapes::Sphere;
 
@@ -11,16 +11,18 @@ pub struct Scene {
     camera: Camera,
     spheres: Vec<Sphere>,
     lights: Vec<Light>,
+    ambient_light_color: Vector3<f32>,
 }
 
 impl Scene {
     pub fn trace(&self, ray: &Ray) -> Vector3<f32> {
-        let mut out_color = Vector3::zero();
         let first_hit = if let Some(hit) = self.intersect(&ray) {
             hit
         } else {
-            return out_color;
+            return self.ambient_light_color;
         };
+        let mut out_color = self.ambient_light_color.mul_element_wise(first_hit.color);
+
         for light in &self.lights {
             let intersection_to_light = light.position - first_hit.intersection;
             let origin = first_hit.intersection + f32::EPSILON * first_hit.normal.get();
@@ -48,7 +50,8 @@ impl Scene {
         Scene {
             camera,
             spheres: Vec::new(),
-            lights: Vec::new()
+            lights: Vec::new(),
+            ambient_light_color: Vector3::new(0.1, 0.1, 0.1),
         }
     }
     pub fn add_sphere(&mut self, sphere: Sphere) {

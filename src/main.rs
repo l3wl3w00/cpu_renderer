@@ -63,7 +63,7 @@ fn create_scene() -> Scene {
     let z_range: (f32, f32) = (-5., 5.);
     let radius_range: (f32, f32) = (0.75, 1.5);
 
-    scene.add_sphere(Sphere::new(Vector3::new(0.0, 0.0, -6.0), 0.1, Vector3::new(1., 1., 1.)));
+    scene.add_sphere(Sphere::new(Vector3::new(0.0, 0.0, -6.0), 0.1, Vector3::new(2., 2., 2.)));
     scene.add_light(Light::from_position(Vector3::new(0.0, 1.0, -5.0)));
 
     for _ in 0..10 {
