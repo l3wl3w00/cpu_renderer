@@ -12,7 +12,7 @@ pub enum TerminalRenderType {
     Colored, BlackAndWhite
 }
 pub struct TerminalRenderer {
-    chars: String,
+    chars_buffer: String,
     stdout: Stdout,
     render_type: TerminalRenderType,
 }
@@ -36,7 +36,7 @@ impl Renderer for TerminalRenderer {
 
         for (index, pixel) in image.pixels().iter().enumerate() {
             if index % Image::width() == 0 {
-                self.chars.push_str("\n");
+                self.chars_buffer.push_str("\n");
             }
             let c = match self.render_type {
                 TerminalRenderType::Colored => {
@@ -54,12 +54,12 @@ impl Renderer for TerminalRenderer {
                     format!("{}{}", c, c)
                 }
             };
-            self.chars.push_str(&c);
+            self.chars_buffer.push_str(&c);
         }
 
-        self.stdout.write_all(self.chars.as_bytes()).unwrap();
+        self.stdout.write_all(self.chars_buffer.as_bytes()).unwrap();
         self.stdout.flush().unwrap();
-        self.chars.clear();
+        self.chars_buffer.clear();
     }
 }
 
@@ -68,7 +68,7 @@ impl TerminalRenderer {
         let mut stdout = stdout();
         stdout.execute(event::EnableMouseCapture).expect("Terminal doesn't allow mouse capture");
         TerminalRenderer {
-            chars: String::new(),
+            chars_buffer: String::new(),
             stdout,
             render_type
         }
