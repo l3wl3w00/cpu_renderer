@@ -12,17 +12,6 @@ impl Sphere {
         Sphere { center, radius, color }
     }
 
-    // (x - x0)^2 + (y - y0)^2 + (z - z0)^2 = R^2
-    // |p - p0|^2 = R^2
-    // |o + d*t - p0|^2 = R^2
-    // (o + d*t - p0) * (o + d*t - p0) = R^2
-    // o^2 + o*d*t - o*p0 + d*t*o + (d*t)^2 - d*t*p0 - p0*o + p0*d*t + p0^2 = R^2
-    // o^2 - 2*o*p0 - p0^2 - R^2 + d*(2o - 2p0) * t + d^2 * t^2 = 0
-    // this is a quadratic equation
-    // a = d^2
-    // b = d*(2o - 2p0)
-    // c = o^2 - 2*o*p0 + p0^2 - R^2
-    // solutions to this are
     pub fn intersect(&self, ray: &Ray) -> Option<HitData> {
         let oc = ray.origin() - self.center;
         let raydir = ray.direction().get();
