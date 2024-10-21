@@ -51,14 +51,16 @@ impl Camera {
     fn direction_to_movement(&self, direction: MoveDirection) -> Vector3<f32> {
         let rotation = self.rotation();
 
-        match direction {
-            MoveDirection::Forward => rotation.rotate_vector(Vector3 { x: 0.0, y: 0.0, z: -1.0 }),
-            MoveDirection::Left => rotation.rotate_vector(Vector3 { x: -1.0, y: 0.0, z: 0.0 }),
-            MoveDirection::Backward => rotation.rotate_vector(Vector3 { x: 0.0, y: 0.0, z: 1.0 }),
-            MoveDirection::Right => rotation.rotate_vector(Vector3 { x: 1.0, y: 0.0, z: 0.0 }),
-            MoveDirection::Up => rotation.rotate_vector(Vector3 { x: 0.0, y: 1.0, z: 0.0 }),
-            MoveDirection::Down => rotation.rotate_vector(Vector3 { x: 0.0, y: -1.0, z: 0.0 }),
-        }
+        let vec = match direction {
+            MoveDirection::Forward => Vector3 { x: 0.0, y: 0.0, z: -1.0 },
+            MoveDirection::Left => Vector3 { x: -1.0, y: 0.0, z: 0.0 },
+            MoveDirection::Backward => Vector3 { x: 0.0, y: 0.0, z: 1.0 },
+            MoveDirection::Right => Vector3 { x: 1.0, y: 0.0, z: 0.0 },
+            MoveDirection::Up => Vector3 { x: 0.0, y: 1.0, z: 0.0 },
+            MoveDirection::Down => Vector3 { x: 0.0, y: -1.0, z: 0.0 },
+        };
+
+        rotation.rotate_vector(vec)
     }
     pub fn tick(&mut self, actions: impl Iterator<Item=SceneAction>, dt: &Duration) {
         let mut vel = Vector3::zero();
