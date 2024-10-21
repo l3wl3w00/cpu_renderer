@@ -10,4 +10,5 @@ Controls:
 - move the mouse to rotate the camera
 - use tab to switch between ascii rendering and colored rendering with terminal cell backgrounds
 
+Demo:
 [![Demo](https://img.youtube.com/vi/slBUn4yHdIY/0.jpg)](https://www.youtube.com/watch?v=slBUn4yHdIY)
