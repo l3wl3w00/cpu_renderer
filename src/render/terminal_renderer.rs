@@ -44,8 +44,7 @@ impl Renderer for TerminalRenderer {
                     if index >= PIXEL_TYPE_COUNT {
                         index = PIXEL_TYPE_COUNT - 1;
                     }
-                    let c = PIXEL_TYPES[index];
-                    format!("{}{}", c, c)
+                    format!("{}", PIXEL_TYPES[index])
                 }
             };
             self.chars_buffer.push_str(&c);
