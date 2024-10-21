@@ -1,7 +1,7 @@
 use crate::input::InputAction::{ActionOnScene, ChangeRenderType};
 use crate::input::SceneAction::RotateCamera;
 use crate::input::{InputAction, InputHandler, MoveDirection, SceneAction};
-use crate::screen::Image;
+use crate::image::Image;
 use cgmath::Vector2;
 use crossterm::event;
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, MouseEvent, MouseEventKind};

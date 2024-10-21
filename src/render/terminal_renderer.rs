@@ -1,4 +1,4 @@
-use crate::core::screen::Image;
+use crate::core::image::Image;
 use crate::input::InputAction;
 use crate::render::{Renderer, PIXEL_TYPES, PIXEL_TYPE_COUNT};
 use colored::Colorize;

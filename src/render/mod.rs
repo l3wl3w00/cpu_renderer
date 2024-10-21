@@ -1,7 +1,7 @@
 pub mod terminal_renderer;
 
 use crate::input::InputAction;
-use crate::screen::Image;
+use crate::image::Image;
 
 const PIXEL_TYPE_COUNT: usize = 8;
 const PIXEL_TYPES: [&str; PIXEL_TYPE_COUNT] = [" ", ".", ",", ";", "*", "x", "#", "@"];

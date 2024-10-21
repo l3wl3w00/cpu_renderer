@@ -5,8 +5,9 @@ use rayon::iter::IntoParallelRefMutIterator;
 use rayon::iter::ParallelIterator;
 use crate::input::terminal_input_handler::pixel_to_screen_space;
 
-const SCREEN_WIDTH: usize = 80 + 45;
-const SCREEN_HEIGHT: usize = 45 + 23;
+const WIDTH_TO_HEIGHT_RATIO: f32 = 16. / 9.;
+const SCREEN_HEIGHT: usize = 68;
+const SCREEN_WIDTH: usize = (SCREEN_HEIGHT as f32 * WIDTH_TO_HEIGHT_RATIO) as usize;
 pub const PIXEL_COUNT: usize = SCREEN_WIDTH * SCREEN_HEIGHT;
 
 pub struct Pixel { color: Vector3<f32> }

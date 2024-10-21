@@ -3,13 +3,13 @@
 use std::time::Duration;
 use crate::core::camera::Camera;
 use crate::core::light::Light;
-use crate::core::scene::{Scene, TimeProvider};
-use crate::core::screen::Image;
+use crate::core::scene::{Scene};
+use crate::core::image::Image;
 use crate::core::shapes::Sphere;
 use cgmath::{Vector3, Zero};
 use rand::random;
 use crate::clock::Clock;
-use crate::core::screen;
+use crate::core::image;
 use crate::input::{InputAction, InputHandler};
 use crate::input::terminal_input_handler::TerminalInputHandler;
 use crate::render::{Renderer};
@@ -33,10 +33,10 @@ fn run_game(
     renderer: &mut impl Renderer,
 ) -> std::io::Result<()> {
 
-    let mut screen_image = Image::new([0.0; screen::PIXEL_COUNT]);
+    let mut screen_image = Image::new([0.0; image::PIXEL_COUNT]);
     let mut scene = create_scene();
     let mut clock: Clock = Clock::new();
-    const FPS_CAP: u16 = 60;
+    const FPS_CAP: u16 = 144;
     const EVENT_POLL_TIME: Duration = Duration::from_millis((1000. / FPS_CAP as f32) as u64);
     loop {
         input_handler.poll_event(&EVENT_POLL_TIME)?;
