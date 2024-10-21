@@ -62,8 +62,8 @@ impl Scene {
         &self.camera
     }
 
-    pub fn tick(&mut self, actions: impl Iterator<Item=SceneAction>, dt: &Duration, total_time: &Duration) {
-        self.camera.tick(actions, &dt);
+    pub fn tick(&mut self, actions: impl Iterator<Item=SceneAction>, time_provider: &impl TimeProvider) {
+        self.camera.tick(actions, time_provider.dt());
 
         let first_light_pos = if let Some(&mut ref mut light) = self.lights.first_mut() {
             &mut light.position
@@ -74,7 +74,7 @@ impl Scene {
         let light_orbit_point = Vector3::new(0.0, 1.0, -6.0);
         let light_orbit_radius = 3.0;
 
-        let elapsed = total_time.as_secs_f32();
+        let elapsed = time_provider.total_time().as_secs_f32();
         let orbit_speed = 1.0;
         let angle = elapsed * orbit_speed;
 
@@ -87,4 +87,9 @@ impl Scene {
 
         self.spheres[0].set_center(*first_light_pos)
     }
+}
+
+pub trait TimeProvider {
+    fn total_time(&self) -> &Duration;
+    fn dt(&self) -> &Duration;
 }

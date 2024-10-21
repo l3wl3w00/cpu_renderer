@@ -1,12 +1,13 @@
 #![feature(iterator_try_collect)]
 use crate::core::camera::Camera;
 use crate::core::light::Light;
-use crate::core::scene::Scene;
+use crate::core::scene::{Scene, TimeProvider};
 use crate::core::screen::Image;
 use crate::core::shapes::Sphere;
 use cgmath::{Vector3, Zero};
 use rand::random;
-use std::time::Duration;
+use std::time::{Duration, Instant};
+use crate::clock::Clock;
 use crate::core::screen;
 use crate::input::{InputAction, InputHandler};
 use crate::input::terminal_input_handler::TerminalInputHandler;
@@ -16,34 +17,32 @@ use crate::render::terminal_renderer::{TerminalRenderType, TerminalRenderer};
 mod core;
 mod render;
 mod input;
+mod clock;
 
 fn main() -> std::io::Result<()> {
-    let mut screen_image = Image::new([0.0; screen::PIXEL_COUNT]);
     let mut renderer = TerminalRenderer::new(TerminalRenderType::Colored);
     let mut input_handler = TerminalInputHandler::new();
 
-    run_game(&mut input_handler, &mut renderer, &mut screen_image)?;
+    run_game(&mut input_handler, &mut renderer)?;
 
     Ok(())
 }
 fn run_game(
     input_handler: &mut impl InputHandler,
     renderer: &mut impl Renderer,
-    screen_image: &mut Image
 ) -> std::io::Result<()> {
-    let mut scene = create_scene();
 
-    let dt = Duration::from_millis(16);
-    let mut total_time = Duration::from_millis(0);
+    let mut screen_image = Image::new([0.0; screen::PIXEL_COUNT]);
+    let mut scene = create_scene();
+    let mut clock: Clock = Clock::new();
 
     loop {
-        input_handler.poll_event(&dt)?;
+        input_handler.poll_event(clock.dt())?;
         if input_handler.input_actions().any(|a| a == InputAction::Quit) {
             break Ok(());
         }
-
-        total_time += dt;
-        scene.tick(input_handler.scene_actions(), &dt, &total_time);
+        clock.tick();
+        scene.tick(input_handler.scene_actions(), &clock);
         renderer.tick(input_handler.input_actions());
 
         screen_image.write(&scene);
@@ -61,7 +60,6 @@ fn create_scene() -> Scene {
 
     scene.add_sphere(Sphere::new(Vector3::new(0.0, 0.0, -6.0), 0.1, Vector3::new(1., 1., 1.)));
     scene.add_light(Light::from_position(Vector3::new(0.0, 1.0, -5.0)));
-
 
     for _ in 0..10 {
         let x = random::<f32>() * (x_range.0 - x_range.1).abs() + x_range.0;
